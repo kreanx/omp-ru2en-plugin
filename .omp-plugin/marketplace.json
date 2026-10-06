@@ -5,7 +5,7 @@
     "name": "ozzzy"
   },
   "metadata": {
-    "description": "Russian-to-English prompt translation for omp",
+    "description": "Перевод русских промптов на английский для omp",
     "version": "1.0.0",
     "pluginRoot": "plugins"
   },
