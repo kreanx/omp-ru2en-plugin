@@ -7,7 +7,7 @@
 ## Установка через marketplace
 
 ```bash
-omp plugin marketplace add <repo-url>        # напр. https://github.com/<user>/omp-ru2en-plugin
+omp plugin marketplace add kreanx/omp-ru2en-plugin
 omp plugin install ru-to-en@ru2en
 ```
 
@@ -43,4 +43,10 @@ omp plugin install ru-to-en@ru2en
 
 ## Установка без marketplace (просто файлом)
 
-Скопировать `plugins/ru-to-en/translate.ts` в `~/.omp/agent/extensions/` и перезапустить omp.
+```bash
+mkdir -p ~/.omp/agent/extensions
+curl -fsSL -o ~/.omp/agent/extensions/ru-to-en.ts \
+  https://raw.githubusercontent.com/kreanx/omp-ru2en-plugin/master/plugins/ru-to-en/translate.ts
+```
+
+Перезапустить omp. Выключить: `/ru2en off` в сессии или удалить файл.
