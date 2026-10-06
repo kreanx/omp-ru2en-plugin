@@ -1,9 +1,12 @@
 import { completeSimple } from "@oh-my-pi/pi-ai";
-import type { ExtensionAPI } from "@oh-my-pi/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@oh-my-pi/pi-coding-agent";
 
 const CYRILLIC = /[\u0400-\u04FF]/;
 const COMMAND_PREFIX = /^(?:\/|!|\$)/;
-const TRANSLATOR_MODEL = process.env.RU_TO_EN_MODEL?.trim() || "@smol";
+const ENV_MODEL = process.env.RU_TO_EN_MODEL?.trim();
+const MODEL_FALLBACKS = [ENV_MODEL, "@smol", "@default"].filter(
+	(spec): spec is string => Boolean(spec),
+);
 
 const SYSTEM_PROMPT = [
 	"You translate the user's message into English.",
@@ -11,6 +14,14 @@ const SYSTEM_PROMPT = [
 	"Preserve markdown structure, line breaks, lists and code blocks exactly.",
 	"Keep @mentions, file paths, URLs, CLI commands and code identifiers unchanged.",
 ].join(" ");
+
+function pickTranslatorModel(ctx: ExtensionContext) {
+	for (const spec of MODEL_FALLBACKS) {
+		const model = ctx.models.resolve(spec);
+		if (model) return model;
+	}
+	return ctx.models.current();
+}
 
 export default function (pi: ExtensionAPI) {
 	let enabled = true;
@@ -27,7 +38,8 @@ export default function (pi: ExtensionAPI) {
 				ctx.ui.notify("ru2en: usage /ru2en [on|off|status]", "warning");
 				return;
 			}
-			ctx.ui.notify(`ru2en: ${enabled ? "on" : "off"} (model ${TRANSLATOR_MODEL})`, "info");
+			const translator = ENV_MODEL ?? "@smol -> @default -> current";
+			ctx.ui.notify(`ru2en: ${enabled ? "on" : "off"} (model ${translator})`, "info");
 		},
 	});
 
@@ -36,9 +48,9 @@ export default function (pi: ExtensionAPI) {
 		const text = event.text;
 		if (!CYRILLIC.test(text) || COMMAND_PREFIX.test(text.trimStart())) return;
 
-		const model = ctx.models.resolve(TRANSLATOR_MODEL);
+		const model = pickTranslatorModel(ctx);
 		if (!model) {
-			pi.logger.warn("ru-to-en: translation model not resolved", { role: TRANSLATOR_MODEL });
+			pi.logger.warn("ru-to-en: no translator model resolved");
 			return;
 		}
 
