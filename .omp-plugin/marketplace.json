@@ -1,0 +1,20 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ru2en",
+  "owner": {
+    "name": "ozzzy"
+  },
+  "metadata": {
+    "description": "Russian-to-English prompt translation for omp",
+    "version": "1.0.0",
+    "pluginRoot": "plugins"
+  },
+  "plugins": [
+    {
+      "name": "ru-to-en",
+      "description": "Translates Russian user input to English before it reaches the main model",
+      "source": "./ru-to-en",
+      "category": "productivity"
+    }
+  ]
+}

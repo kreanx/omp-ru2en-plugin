@@ -1,0 +1,8 @@
+{
+  "name": "ru-to-en",
+  "version": "1.0.0",
+  "private": true,
+  "omp": {
+    "extensions": ["./translate.ts"]
+  }
+}
